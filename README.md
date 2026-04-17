@@ -10,6 +10,19 @@ A self-contained, runnable reference architecture for a **multi-tenant SaaS on A
 - **Runtime** — the platform: Cloudflare edge, Entra ID, App Service with Managed Identity, Azure SQL with Row-Level Security, Key Vault, Log Analytics.
 - **Delivery** — the CI/CD spine: OIDC federated login to Azure (no long-lived secrets in GitHub), `tfsec` / `checkov` / `trivy` gates, staged `dev → staging → prod` with blue/green slot swaps.
 
+## Architecture diagrams
+
+### Runtime — multi-tenant platform
+
+![Runtime architecture](docs/architecture-runtime.svg)
+
+### Delivery — secure CI/CD pipeline
+
+![Delivery architecture](docs/architecture-delivery.svg)
+
+> Both diagrams are vector SVGs — open them in a new tab for full-size,
+> or see the rendered layer view on the [portfolio card](https://nirmitdagli.github.io/#work).
+
 ## What I want an interviewer to notice
 
 | Principle | Where it shows up |
