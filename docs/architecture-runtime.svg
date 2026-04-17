@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 760" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#fafaf6"/>
+      <stop offset="1" stop-color="#f4f3ec"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+    <style>
+      .layer { fill: #ffffff; stroke: #e2e1d7; stroke-width: 1.2; rx: 14; }
+      .layer-title { font-weight: 600; font-size: 14px; fill: #0f172a; letter-spacing: 0.3px; }
+      .layer-sub { font-size: 12px; fill: #475569; }
+      .flow { stroke: #334155; stroke-width: 1.4; fill: none; marker-end: url(#arrow); }
+      .pill { font-size: 11px; font-family: 'JetBrains Mono', monospace; }
+      .accent-amber { fill: #fef3c7; stroke: #d97706; }
+      .accent-teal  { fill: #ccfbf1; stroke: #0d9488; }
+      .accent-yellow{ fill: #fef9c3; stroke: #eab308; }
+      .title { font-size: 20px; font-weight: 700; fill: #0f172a; }
+      .subtitle { font-size: 12px; fill: #64748b; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
+    </style>
+  </defs>
+
+  <rect width="900" height="760" fill="url(#bg)"/>
+
+  <text x="40" y="44" class="subtitle">RUNTIME — MULTI-TENANT AZURE SAAS</text>
+  <text x="40" y="72" class="title">SideCoach Blueprint · Platform View</text>
+
+  <!-- Edge -->
+  <g transform="translate(40,100)">
+    <rect width="820" height="82" class="layer accent-amber"/>
+    <text x="20" y="28" class="layer-title">Edge · Cloudflare</text>
+    <text x="20" y="50" class="layer-sub">WAF (OWASP) · DDoS shield · DNS per tenant · Strict TLS 1.2+ · Rate limit /api/auth/*</text>
+    <text x="20" y="70" class="pill" fill="#b45309">cloudflare_ruleset · cloudflare_rate_limit · zone_settings_override</text>
+  </g>
+
+  <!-- Identity -->
+  <g transform="translate(40,200)">
+    <rect width="820" height="82" class="layer accent-teal"/>
+    <text x="20" y="28" class="layer-title">Identity · Microsoft Entra ID</text>
+    <text x="20" y="50" class="layer-sub">Tenant-scoped RBAC · Admin / Host / Athlete roles · Conditional Access · SSO</text>
+    <text x="20" y="70" class="pill" fill="#0f766e">tenant_id claim drives SESSION_CONTEXT in SQL for RLS</text>
+  </g>
+
+  <!-- Compute -->
+  <g transform="translate(40,300)">
+    <rect width="820" height="82" class="layer accent-amber"/>
+    <text x="20" y="28" class="layer-title">Compute · Azure App Service (P1v3)</text>
+    <text x="20" y="50" class="layer-sub">Linux container · System-Assigned Managed Identity · Autoscale + staging slot · HTTPS-only</text>
+    <text x="20" y="70" class="pill" fill="#b45309">azurerm_linux_web_app · azurerm_service_plan</text>
+  </g>
+
+  <!-- Data -->
+  <g transform="translate(40,400)">
+    <rect width="820" height="100" class="layer accent-teal"/>
+    <text x="20" y="28" class="layer-title">Data · Azure SQL with Row-Level Security</text>
+    <text x="20" y="50" class="layer-sub">Per-tenant RLS policies · Blob Storage (SAS-scoped) · Redis cache · Private endpoints</text>
+    <text x="20" y="70" class="pill" fill="#0f766e">CREATE SECURITY POLICY rls.tenant_isolation_policy FILTER PREDICATE fn_tenant_isolation</text>
+    <text x="20" y="90" class="pill" fill="#0f766e">modules/sql-rls · azurerm_mssql_database · null_resource.apply_rls</text>
+  </g>
+
+  <!-- Secrets + Audit -->
+  <g transform="translate(40,518)">
+    <rect width="820" height="82" class="layer accent-amber"/>
+    <text x="20" y="28" class="layer-title">Secrets &amp; Audit · Key Vault · Defender for Cloud</text>
+    <text x="20" y="50" class="layer-sub">RBAC auth · soft-delete 90d · purge-protect · activity logs → Log Analytics</text>
+    <text x="20" y="70" class="pill" fill="#b45309">azurerm_key_vault · azurerm_role_assignment(Key Vault Secrets User)</text>
+  </g>
+
+  <!-- Observability -->
+  <g transform="translate(40,618)">
+    <rect width="820" height="82" class="layer accent-teal"/>
+    <text x="20" y="28" class="layer-title">Observability · Azure Monitor · App Insights · Datadog</text>
+    <text x="20" y="50" class="layer-sub">Distributed traces · error budgets · tenant-tagged dashboards</text>
+    <text x="20" y="70" class="pill" fill="#0f766e">every span carries tenant_id for fast tenant-scoped RCA</text>
+  </g>
+
+  <!-- Flow arrows between layers -->
+  <path class="flow" d="M 450 182 L 450 200"/>
+  <path class="flow" d="M 450 282 L 450 300"/>
+  <path class="flow" d="M 450 382 L 450 400"/>
+  <path class="flow" d="M 450 500 L 450 518"/>
+  <path class="flow" d="M 450 600 L 450 618"/>
+
+</svg>

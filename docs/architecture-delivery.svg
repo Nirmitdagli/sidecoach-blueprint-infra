@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 680" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#fafaf6"/>
+      <stop offset="1" stop-color="#f4f3ec"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+    <style>
+      .layer { fill: #ffffff; stroke: #e2e1d7; stroke-width: 1.2; rx: 14; }
+      .layer-title { font-weight: 600; font-size: 14px; fill: #0f172a; }
+      .layer-sub { font-size: 12px; fill: #475569; }
+      .flow { stroke: #334155; stroke-width: 1.4; fill: none; marker-end: url(#arrow); }
+      .pill { font-size: 11px; font-family: 'JetBrains Mono', monospace; }
+      .accent-amber { fill: #fef3c7; stroke: #d97706; }
+      .accent-teal  { fill: #ccfbf1; stroke: #0d9488; }
+      .title { font-size: 20px; font-weight: 700; fill: #0f172a; }
+      .subtitle { font-size: 12px; fill: #64748b; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
+    </style>
+  </defs>
+
+  <rect width="900" height="680" fill="url(#bg)"/>
+  <text x="40" y="44" class="subtitle">DELIVERY — SECURE CI/CD</text>
+  <text x="40" y="72" class="title">SideCoach Blueprint · Pipeline View</text>
+
+  <g transform="translate(40,100)">
+    <rect width="820" height="72" class="layer accent-teal"/>
+    <text x="20" y="28" class="layer-title">Source · GitHub</text>
+    <text x="20" y="50" class="layer-sub">Branch protection · CODEOWNERS · signed commits · required reviews</text>
+  </g>
+
+  <g transform="translate(40,190)">
+    <rect width="820" height="72" class="layer accent-amber"/>
+    <text x="20" y="28" class="layer-title">Trust · OIDC Federated Login → Azure</text>
+    <text x="20" y="50" class="layer-sub">No long-lived secrets. azure/login@v2 exchanges a short-lived GitHub token for an Azure AD access token.</text>
+  </g>
+
+  <g transform="translate(40,280)">
+    <rect width="820" height="72" class="layer accent-teal"/>
+    <text x="20" y="28" class="layer-title">Quality Gates</text>
+    <text x="20" y="50" class="layer-sub">terraform fmt · validate · tfsec · Checkov · Trivy (HIGH+CRITICAL) · Dependabot · SAST</text>
+  </g>
+
+  <g transform="translate(40,370)">
+    <rect width="820" height="72" class="layer accent-amber"/>
+    <text x="20" y="28" class="layer-title">Build</text>
+    <text x="20" y="50" class="layer-sub">terraform plan · container build → ACR · image signed with cosign · unit + integration tests</text>
+  </g>
+
+  <g transform="translate(40,460)">
+    <rect width="820" height="72" class="layer accent-teal"/>
+    <text x="20" y="28" class="layer-title">Deploy · dev → staging → prod</text>
+    <text x="20" y="50" class="layer-sub">Blue/green App Service slot swap · Key Vault secret rotation · smoke test before swap</text>
+  </g>
+
+  <g transform="translate(40,550)">
+    <rect width="820" height="72" class="layer accent-amber"/>
+    <text x="20" y="28" class="layer-title">Compliance</text>
+    <text x="20" y="50" class="layer-sub">Audit log export · monthly restore drills · IR + DR runbooks · FERPA / COPPA mapped</text>
+  </g>
+
+  <!-- Flow -->
+  <path class="flow" d="M 450 172 L 450 190"/>
+  <path class="flow" d="M 450 262 L 450 280"/>
+  <path class="flow" d="M 450 352 L 450 370"/>
+  <path class="flow" d="M 450 442 L 450 460"/>
+  <path class="flow" d="M 450 532 L 450 550"/>
+</svg>

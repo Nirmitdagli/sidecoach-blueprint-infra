@@ -1,0 +1,135 @@
+name: Deploy (dev → staging → prod)
+
+# Every push to main runs validate + scans.
+# Staging deploys on merge; prod requires manual approval via GitHub Environments.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write        # OIDC federated login — no long-lived Azure secrets in GitHub.
+  contents: read
+
+env:
+  TF_IN_AUTOMATION: "true"
+  TERRAFORM_VERSION: "1.7.5"
+
+jobs:
+  # -------------------------------------------------------------------------
+  # 1. Validate + scan. Runs on every push, blocks the pipeline if anything
+  #    is red. Zero cloud access — purely static analysis.
+  # -------------------------------------------------------------------------
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform fmt + validate
+        run: |
+          terraform -chdir=infra fmt -check
+          terraform -chdir=infra init -backend=false
+          terraform -chdir=infra validate
+
+      - name: tfsec
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          working_directory: infra
+
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: infra
+          quiet: true
+          soft_fail: false
+
+      - name: Trivy fs (HIGH + CRITICAL only)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+
+  # -------------------------------------------------------------------------
+  # 2. Staging deploy. Federated OIDC login → terraform apply.
+  # -------------------------------------------------------------------------
+  deploy-staging:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id:       ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id:       ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform apply (staging)
+        run: |
+          terraform -chdir=infra init \
+            -backend-config="resource_group_name=${{ secrets.TF_STATE_RG }}" \
+            -backend-config="storage_account_name=${{ secrets.TF_STATE_SA }}" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=staging.tfstate"
+
+          terraform -chdir=infra apply -auto-approve \
+            -var="env_name=staging" \
+            -var="resource_group=sidecoach-staging-rg"
+
+  # -------------------------------------------------------------------------
+  # 3. Production deploy. Manual approval gate via GitHub Environments.
+  #    Blue/green slot swap so rollback is an `az webapp deployment slot
+  #    swap` away.
+  # -------------------------------------------------------------------------
+  deploy-prod:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment: production   # requires manual approval
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/login@v2
+        with:
+          client-id:       ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id:       ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform apply (prod, staging slot)
+        run: |
+          terraform -chdir=infra init \
+            -backend-config="resource_group_name=${{ secrets.TF_STATE_RG }}" \
+            -backend-config="storage_account_name=${{ secrets.TF_STATE_SA }}" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=prod.tfstate"
+
+          terraform -chdir=infra apply -auto-approve \
+            -var="env_name=prod" \
+            -var="resource_group=sidecoach-prod-rg"
+
+      - name: Smoke test the staging slot
+        run: |
+          URL=$(az webapp show -g sidecoach-prod-rg -n sidecoach-prod-app --slot staging --query defaultHostName -o tsv)
+          curl -fsS "https://${URL}/health" | tee /tmp/health.json
+          jq -e '.status == "ok"' /tmp/health.json
+
+      - name: Blue/green slot swap
+        run: |
+          az webapp deployment slot swap \
+            -g sidecoach-prod-rg \
+            -n sidecoach-prod-app \
+            --slot staging
