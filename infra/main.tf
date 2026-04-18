@@ -1,5 +1,5 @@
 ###############################################################################
-# SideCoach Blueprint — root Terraform module.
+# Azure SaaS Blueprint — root Terraform module.
 #
 # What lives here:
 #   - Key Vault                       (all secrets; RBAC auth; soft-delete + purge-protect)

@@ -10,7 +10,7 @@ variable "env_name" {
 variable "prefix" {
   description = "Short project prefix — used in resource names."
   type        = string
-  default     = "sidecoach"
+  default     = "tenantapp"
 }
 
 variable "location" {
@@ -34,7 +34,7 @@ variable "tags" {
   description = "Tags applied to every resource."
   type        = map(string)
   default = {
-    project = "sidecoach-blueprint"
+    project = "azure-saas-blueprint"
     owner   = "nirmit.dagli"
     managed = "terraform"
   }

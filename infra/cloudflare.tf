@@ -44,7 +44,7 @@ resource "cloudflare_record" "tenant" {
 # ---------- WAF — OWASP managed ruleset -------------------------------------
 resource "cloudflare_ruleset" "waf" {
   zone_id = var.zone_id
-  name    = "sidecoach-waf"
+  name    = "tenantapp-waf"
   kind    = "zone"
   phase   = "http_request_firewall_managed"
 

@@ -25,7 +25,7 @@
   <rect width="900" height="760" fill="url(#bg)"/>
 
   <text x="40" y="44" class="subtitle">RUNTIME — MULTI-TENANT AZURE SAAS</text>
-  <text x="40" y="72" class="title">SideCoach Blueprint · Platform View</text>
+  <text x="40" y="72" class="title">Azure SaaS Blueprint · Platform View</text>
 
   <!-- Edge -->
   <g transform="translate(40,100)">

@@ -85,7 +85,7 @@ jobs:
 
           terraform -chdir=infra apply -auto-approve \
             -var="env_name=staging" \
-            -var="resource_group=sidecoach-staging-rg"
+            -var="resource_group=tenantapp-staging-rg"
 
   # -------------------------------------------------------------------------
   # 3. Production deploy. Manual approval gate via GitHub Environments.
@@ -119,17 +119,17 @@ jobs:
 
           terraform -chdir=infra apply -auto-approve \
             -var="env_name=prod" \
-            -var="resource_group=sidecoach-prod-rg"
+            -var="resource_group=tenantapp-prod-rg"
 
       - name: Smoke test the staging slot
         run: |
-          URL=$(az webapp show -g sidecoach-prod-rg -n sidecoach-prod-app --slot staging --query defaultHostName -o tsv)
+          URL=$(az webapp show -g tenantapp-prod-rg -n tenantapp-prod-app --slot staging --query defaultHostName -o tsv)
           curl -fsS "https://${URL}/health" | tee /tmp/health.json
           jq -e '.status == "ok"' /tmp/health.json
 
       - name: Blue/green slot swap
         run: |
           az webapp deployment slot swap \
-            -g sidecoach-prod-rg \
-            -n sidecoach-prod-app \
+            -g tenantapp-prod-rg \
+            -n tenantapp-prod-app \
             --slot staging

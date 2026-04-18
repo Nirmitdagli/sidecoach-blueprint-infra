@@ -1,6 +1,6 @@
-# SideCoach Blueprint — Infrastructure
+# Azure SaaS Blueprint — Infrastructure
 
-> **The Terraform + CI/CD backing the _SideCoach Blueprint_ project card on [nirmitdagli.github.io](https://nirmitdagli.github.io).**
+> **The Terraform + CI/CD backing the _Azure SaaS Blueprint_ project card on [nirmitdagli.github.io](https://nirmitdagli.github.io).**
 > A production-grade reference architecture for a multi-tenant Azure SaaS — written in real HCL, not diagrams on a slide.
 
 ## What this is
@@ -67,7 +67,7 @@ All four should be green on a clean checkout.
 
 ## Why the portfolio links here
 
-This repo is the "show your work" half of the SideCoach Blueprint project card at [nirmitdagli.github.io](https://nirmitdagli.github.io). The portfolio shows the story; this repo shows the code. Both commits are on the same day — same person, same week.
+This repo is the "show your work" half of the Azure SaaS Blueprint project card at [nirmitdagli.github.io](https://nirmitdagli.github.io). The portfolio shows the story; this repo shows the code. Both commits are on the same day — same person, same week.
 
 —
 Nirmit Dagli · Cloud Infrastructure & Security Engineer · [LinkedIn](https://linkedin.com/in/nirmitdagli)
